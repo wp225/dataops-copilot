@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "DataOps Copilot: an agentic data-quality and incident-response system for an Azure data lake."
+title: "dataops-copilot"
+abstract: "DataOps Copilot: an agentic data-quality and incident-response system for an Azure data lake."
+authors:
+  - name: "Jeorge Joshi"
+version: 0.1.0
+license: "MIT"
+repository-code: "https://github.com/wp225/dataops-copilot"
+keywords:
+  - "python"

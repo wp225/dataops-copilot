@@ -1,0 +1,36 @@
+site_name: dataops-copilot
+repo_url: https://github.com/wp225/dataops-copilot
+site_url: https://wp225.github.io/dataops-copilot
+site_description: DataOps Copilot: an agentic data-quality and incident-response system for an Azure data lake.
+site_author: Jeorge Joshi
+repo_name: wp225/dataops-copilot
+edit_uri: edit/main/docs/
+copyright: Maintained by <a href="https://github.com/wp225">Jeorge Joshi</a>.
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - License: license.md
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: deep purple
+    accent: purple
+  icon:
+    repo: fontawesome/brands/github
+plugins:
+  - search
+  - gh-admonitions
+  - minify:
+      minify_html: true
+      htmlmin_opts:
+        remove_comments: true
+markdown_extensions:
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      use_pygments: true
+      pygments_style: material
+      noclasses: true
+  - pymdownx.inlinehilite
+  - pymdownx.emoji
+  - admonition
