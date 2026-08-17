@@ -18,6 +18,10 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
+    "fastapi>=0.141.1",
+    "pydantic-settings>=2.15.0",
+    "structlog>=26.1.0",
+    "uvicorn[standard]>=0.52.3",
 ]
 
 [dependency-groups]
@@ -33,6 +37,7 @@ dev = [
     "taskipy>=1.14.1",
     "pre-commit>=4.6.1",
     "python-semantic-release>=10.6.1",
+    "httpx2>=2.10.0",
 ]
 
 [project.urls]
@@ -101,6 +106,7 @@ ignore = [
     "S311",     # rand-usage
     "EM102",    # f-string-exception
     "TRY003",   # long-exception-messages
+    "COM812",
 ]
 
 [tool.ruff.format]
