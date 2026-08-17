@@ -5,11 +5,15 @@ on:
   push:
     branches:
       - main
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
+
 permissions:
   contents: read
+  pull-requests: read
+
 jobs:
   title-check:
     if: github.event_name == 'pull_request'
@@ -19,6 +23,8 @@ jobs:
         with:
           types: "feat, fix, docs, style, refactor, perf, test, build, ci, revert, deps"
           requireScope: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test:
     runs-on: ubuntu-latest
