@@ -19,9 +19,12 @@ classifiers = [
 ]
 dependencies = [
     "fastapi>=0.141.1",
+    "pandas>=2.2,<3",
     "pydantic-settings>=2.15.0",
+    "pyspark[sql]>=4.2,<4.3",
     "structlog>=26.1.0",
     "uvicorn[standard]>=0.52.3",
+    "pydantic>=2.12,<3",
 ]
 
 [dependency-groups]
@@ -39,6 +42,8 @@ dev = [
     "python-semantic-release>=10.6.1",
     "httpx2>=2.10.0",
     "zensical>=0.0.52",
+    "ipykernel>=6.0",
+    "pydantic>=2.12,<3",
 
 ]
 
