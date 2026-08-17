@@ -1,7 +1,7 @@
 site_name: dataops-copilot
 repo_url: https://github.com/wp225/dataops-copilot
 site_url: https://wp225.github.io/dataops-copilot
-site_description: DataOps Copilot: an agentic data-quality and incident-response system for an Azure data lake.
+site_description: DataOps Copilot, an agentic data-quality and incident-response system for an Azure data lake.
 site_author: Jeorge Joshi
 repo_name: wp225/dataops-copilot
 edit_uri: edit/main/docs/
