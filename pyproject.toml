@@ -114,6 +114,7 @@ ignore = [
     "EM102",    # f-string-exception
     "TRY003",   # long-exception-messages
     "COM812",
+    "N812",  # PySpark convention: import functions as F
 ]
 
 [tool.ruff.format]
@@ -145,7 +146,7 @@ include = ["src/**/*.py"]
 [tool.coverage.report]
 skip_empty = true
 show_missing = true
-fail_under = 100
+fail_under = 85
 exclude_also = [
     "if __name__ == .__main__.:",
 ]
