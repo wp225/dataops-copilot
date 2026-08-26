@@ -23,10 +23,7 @@ def test_detect_incidents_returns_all_policy_violations() -> None:
     incidents = detect_incidents(report, policy)
 
     assert len(incidents) == 4
-    assert {
-        (incident.metric, incident.affected_column)
-        for incident in incidents
-    } == {
+    assert {(incident.metric, incident.affected_column) for incident in incidents} == {
         ("null_rate", "VendorID"),
         ("duplicate_rate", None),
         ("negative_fare_rate", "fare_amount"),
