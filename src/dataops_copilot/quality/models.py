@@ -17,3 +17,11 @@ class QualityReport(BaseModel):
     duplicate_rate: Rate
     negative_fare_rate: Rate
     invalid_trip_distance_rate: Rate
+
+class DataQualityIncident(BaseModel):
+    """Describes data quality violation."""
+
+    metric: str
+    observed_rate: Rate
+    threshold: Rate
+    affected_column: str | None = None
