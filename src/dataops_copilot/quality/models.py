@@ -18,6 +18,7 @@ class QualityReport(BaseModel):
     negative_fare_rate: Rate
     invalid_trip_distance_rate: Rate
 
+
 class DataQualityIncident(BaseModel):
     """Describes data quality violation."""
 
