@@ -38,3 +38,49 @@ class IncidentRCAReport(BaseModel):
     report: RCAReport
     completed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
+
+class HistoricalIncidentMatch(BaseModel):
+    """Historic Similar Incident."""
+
+    historical_incident: IncidentRCAReport
+    similarity_reasons: list[str]
+
+
+class AnalysisHypothesis(BaseModel):
+    """Hypothesis for incident."""
+
+    statment: str
+    likelihood: Literal["low", "medium", "high"]
+    tests_to_clarify: list[str]
+
+
+class AnalysisPlan(BaseModel):
+    """Analysis plan for a hypothesis."""
+
+    hypothesis: AnalysisHypothesis
+    analysis_goal: str
+
+
+class GeneratedAnalysis(BaseModel):
+    """Generated Analysis for Plan."""
+
+    plan: AnalysisPlan
+    code: str
+
+
+class CodeValidationResult(BaseModel):
+    """Code guardrail check."""
+
+    generated_analysis: GeneratedAnalysis
+    is_safe: bool
+    violations: list[str]
+
+
+class AnalysisExecutionResult(BaseModel):
+    """Result for code execution."""
+
+    validation: CodeValidationResult
+    succeeded: bool
+    result_summary: str
+    error_message: str | None = None
+    execution_time_ms: float
