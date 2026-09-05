@@ -1,5 +1,6 @@
 """Langgraph node for RCA retreval."""
 
+from collections.abc import Callable
 from pathlib import Path
 
 from dataops_copilot.agent.models import (
@@ -13,7 +14,7 @@ from dataops_copilot.agent.state import InvestigationState
 
 def make_search_history_node(
     rca_dump_path: str | Path,
-) -> callable[[IncidentInvestigationRequest], dict[str, list[HistoricalIncidentMatch]]]:
+) -> Callable[[InvestigationState], dict[str, list[HistoricalIncidentMatch]]]:
     """Create a node that retrives historical RCA matches."""
 
     def search_history(state: InvestigationState) -> dict[str, list[HistoricalIncidentMatch]]:
