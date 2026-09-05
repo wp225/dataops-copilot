@@ -33,3 +33,18 @@ repos:
     rev: "v1.7.12"
     hooks:
       - id: actionlint
+
+  - repo: local
+    hooks:
+      - id: ty-check
+        name: ty check
+        entry: uv run ty check
+        language: system
+        pass_filenames: false
+        types: [python]
+      - id: pytest-coverage
+        name: pytest with coverage
+        entry: bash -c 'uv run coverage run -m pytest tests && uv run coverage report'
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
