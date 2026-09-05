@@ -177,3 +177,5 @@ commit_author = "github-actions[bot] <41898282+github-actions[bot]@users.noreply
 commit_parser = "angular"
 tag_format = "v{version}"
 branch = "main"
+build_command = "uv lock"
+assets = ["uv.lock"]
