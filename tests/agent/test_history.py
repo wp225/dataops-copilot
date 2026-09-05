@@ -3,13 +3,12 @@
 import json
 from pathlib import Path
 
-from dataops_copilot.agent.services.history import search_rca_reports
-
 from dataops_copilot.agent.models import (
     IncidentInvestigationRequest,
     IncidentRCAReport,
     RCAReport,
 )
+from dataops_copilot.agent.services.history import search_rca_reports
 from dataops_copilot.quality.models import DataQualityIncident, QualityReport
 
 
