@@ -8,7 +8,7 @@ type Rate = Annotated[float, Field(ge=0.0, le=1.0)]
 
 
 class QualityReport(BaseModel):
-    """Deterministic Quality Metrices."""
+    """Deterministic Quality Metrics."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 

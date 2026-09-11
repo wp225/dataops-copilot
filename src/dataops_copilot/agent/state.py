@@ -16,7 +16,7 @@ from dataops_copilot.agent.models import (
 
 
 class InvestigationState(BaseModel):
-    """Track Evidence and descisions for investigation runs."""
+    """Track Evidence and decisions for investigation runs."""
 
     request: IncidentInvestigationRequest
 

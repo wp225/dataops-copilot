@@ -13,7 +13,7 @@ from dataops_copilot.agent.models import (
 def search_rca_reports(
     investigation_request: IncidentInvestigationRequest, rca_dump_path: Path | str
 ) -> list[HistoricalIncidentMatch]:
-    """Searches for similar incidents from json dump. Syntatic for now, RAG later."""
+    """Searches for similar incidents from json dump. Syntactic for now, RAG later."""
     current_incident = investigation_request.incident
 
     raw_reports = json.loads(Path(rca_dump_path).read_text(encoding="utf-8"))
