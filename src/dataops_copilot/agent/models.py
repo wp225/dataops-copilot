@@ -47,17 +47,18 @@ class HistoricalIncidentMatch(BaseModel):
 
 
 class AnalysisHypothesis(BaseModel):
-    """Hypothesis for incident."""
+    """Describe one plausible hypothesis for incident."""
 
-    statment: str
+    likely_cause: str
+    rationale: str
     likelihood: Literal["low", "medium", "high"]
-    tests_to_clarify: list[str]
+    checks_to_run: list[str]
 
 
 class AnalysisPlan(BaseModel):
     """Analysis plan for a hypothesis."""
 
-    hypothesis: AnalysisHypothesis
+    hypotheses: list[AnalysisHypothesis] = Field(min_length=1, max_length=3)
     analysis_goal: str
 
 

@@ -1,1 +1,1 @@
-"""Test for historical incident retrival."""
+"""Test for historical incident retrieval."""
