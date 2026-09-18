@@ -5,10 +5,10 @@ DataOps Copilot: an agentic data-quality and incident-response system for an Azu
 
 ## System overview
 
-![AI Job Assist system overview](diagrams/system/system.png)
+![Dataops-Copilot overview](diagrams/system/system.png)
 ### Ranking overview
 
-![Ranking overview](diagrams/system/ranking.png)
+![Cyclic graph overview](diagrams/system/cyclic-agent-graph.png)
 
 ## Workflow
 
