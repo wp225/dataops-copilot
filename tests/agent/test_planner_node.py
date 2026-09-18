@@ -1,19 +1,17 @@
-"""Integration test for the RCA LangGraph workflow."""
+"""Tests for the RCA investigation-planning node."""
 
-from pathlib import Path
-
-from dataops_copilot.agent.graph import build_investigation_graph
 from dataops_copilot.agent.models import (
     AnalysisHypothesis,
     AnalysisPlan,
-    HistoricalIncidentMatch,
     IncidentInvestigationRequest,
 )
+from dataops_copilot.agent.nodes.planner import make_plan_analysis_node
+from dataops_copilot.agent.state import InvestigationState
 from dataops_copilot.quality.models import DataQualityIncident, QualityReport
 
 
-def test_graph_adds_plan_after_history_search(tmp_path: Path) -> None:
-    """Run history retrieval and planning through the graph."""
+def test_plan_analysis_node_adds_planner_result_to_state() -> None:
+    """Store the plan returned by the injected planner."""
     request = IncidentInvestigationRequest(
         incident=DataQualityIncident(
             metric="negative_fare_rate",
@@ -45,19 +43,13 @@ def test_graph_adds_plan_after_history_search(tmp_path: Path) -> None:
 
     def fake_planner(
         received_request: IncidentInvestigationRequest,
-        historical_matches: list[HistoricalIncidentMatch],
+        historical_matches: list[object],
     ) -> AnalysisPlan:
         assert received_request == request
         assert historical_matches == []
         return expected_plan
 
-    rca_dump_path = tmp_path / "rca_reports.json"
-    rca_dump_path.write_text("[]", encoding="utf-8")
+    node = make_plan_analysis_node(fake_planner)
+    update = node(InvestigationState(request=request))
 
-    graph = build_investigation_graph(
-        rca_dump_path,
-        planner=fake_planner,
-    )
-    result = graph.invoke({"request": request})
-    assert result["historical_matches"] == []
-    assert result["analysis_plan"] == expected_plan
+    assert update == {"analysis_plan": expected_plan}

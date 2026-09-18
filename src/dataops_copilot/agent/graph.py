@@ -20,10 +20,10 @@ def build_investigation_graph(rca_dump_path: Path | str, planner: Planner) -> Co
     )
     workflow.add_node(
         "analysis_planning",
-        make_plan_analysis_node(planner),  # ty : ignore
+        make_plan_analysis_node(planner),
     )
     workflow.add_edge(START, "historic_search")
     workflow.add_edge("historic_search", "analysis_planning")
-    workflow.add_edge("historic_search", END)
+    workflow.add_edge("analysis_planning", END)
 
     return workflow.compile()

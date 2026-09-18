@@ -21,7 +21,7 @@ class InvestigationState(BaseModel):
     request: IncidentInvestigationRequest
 
     historical_matches: list[HistoricalIncidentMatch] = Field(default_factory=list)
-    current_plan: AnalysisPlan | None = None
+    analysis_plan: AnalysisPlan | None = None
     generated_analysis: GeneratedAnalysis | None = None
     code_validation: CodeValidationResult | None = None
     analysis_result: list[AnalysisExecutionResult] = Field(default_factory=list)
