@@ -1,6 +1,7 @@
 """LangGraph workflow for RCA investigations."""
 
 from pathlib import Path
+from typing import Any, cast
 
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.state import CompiledStateGraph
@@ -20,7 +21,7 @@ def build_investigation_graph(rca_dump_path: Path | str, planner: Planner) -> Co
     )
     workflow.add_node(
         "analysis_planning",
-        make_plan_analysis_node(planner),
+        cast("Any", make_plan_analysis_node(planner)),
     )
     workflow.add_edge(START, "historic_search")
     workflow.add_edge("historic_search", "analysis_planning")

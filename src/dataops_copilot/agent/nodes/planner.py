@@ -9,7 +9,7 @@ from dataops_copilot.agent.state import InvestigationState
 
 def make_plan_analysis_node(
     planner: Planner,
-) -> Callable([InvestigationState], AnalysisPlan):
+) -> Callable[[InvestigationState], dict]:
     """Create a node that adds an investigation plan to state."""
 
     def plan_analysis(state: InvestigationState) -> dict[str, AnalysisPlan]:
