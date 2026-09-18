@@ -9,10 +9,8 @@ from dataops_copilot.agent.state import InvestigationState
 StateUpdate = dict[str, object]
 
 
-def make_search_history_node(
-    rca_dump_path: str | Path,
-) -> callable[[IncidentInvestigationRequest], dict[str, list[HistoricalIncidentMatch]]]:
-    """Create a node that retrives historical RCA matches."""
+def make_search_history_node(rca_dump_path: str | Path):  # noqa: ANN201
+    """Create a node that retrieves historical RCA matches."""
 
     def search_history(state: InvestigationState) -> StateUpdate:
         historic_matches = search_rca_reports(

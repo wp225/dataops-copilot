@@ -27,11 +27,13 @@ def make_request() -> IncidentInvestigationRequest:
 
 
 def test_investigation_state_defaults() -> None:
-    """A freshly created state should carry only the request, with empty defaults."""
+    """A freshly created state shoulduv run pytest tests/agent -v
+    uv run pytest carry only the request, with empty defaults.
+    """
     state = InvestigationState(request=make_request())
 
     assert state.historical_matches == []
-    assert state.current_plan is None
+    assert state.analysis_plan is None
     assert state.generated_analysis is None
     assert state.code_validation is None
     assert state.analysis_result == []
