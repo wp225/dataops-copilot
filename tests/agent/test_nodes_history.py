@@ -63,8 +63,7 @@ def test_search_history_node_returns_historic_matches(tmp_path: Path) -> None:
     state = InvestigationState(request=make_request())
 
     result = search_history(state)
+    matches = result["historical_matches"]
 
-    assert len(result["historic_matches"]) == 1
-    assert result["historic_matches"][0].historical_incident.request.incident.metric == (
-        "negative_fare_rate"
-    )
+    assert len(matches) == 1
+    assert matches[0].historical_incident.request.incident.metric == ("negative_fare_rate")

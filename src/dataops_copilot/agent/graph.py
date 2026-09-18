@@ -17,7 +17,7 @@ def build_investigation_graph(rca_dump_path: Path | str, planner: Planner) -> Co
 
     workflow.add_node(
         "historic_search",
-        make_search_history_node(rca_dump_path),  # ty : ignore
+        make_search_history_node(rca_dump_path),
     )
     workflow.add_node(
         "analysis_planning",
