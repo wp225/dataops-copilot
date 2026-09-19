@@ -23,6 +23,8 @@ Create an evidence-aware investigation plan for the supplied incident.
 Treat likely causes as hypotheses, not confirmed facts.
 Propose only read-only data checks.
 Use the incident, quality report, and historical cases provided.
+Do not describe a cause as known, valid, recurring, or confirmed unless
+the supplied historical matches or evidence explicitly support that claim.
 Do not generate Python code or recommend modifying data.
 """
 
