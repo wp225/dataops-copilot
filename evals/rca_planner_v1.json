@@ -1,0 +1,34 @@
+[
+  {
+    "case_id": "negative-fares-no-history",
+    "request": {
+      "incident": {
+        "metric": "negative_fare_rate",
+        "observed_rate": 0.01,
+        "threshold": 0.001,
+        "affected_column": "fare_amount"
+      },
+      "quality_report": {
+        "row_count": 1000,
+        "negative_fare_rate": 0.01,
+        "invalid_trip_distance_rate": 0.0,
+        "duplicate_rate": 0.0,
+        "null_rates": {
+          "fare_amount": 0.0,
+          "trip_distance": 0.0
+        }
+      },
+      "dataset_name": "yellow_taxi",
+      "batch_id": "batch-001"
+    },
+    "historical_matches": [],
+    "expected_cause_categories": [
+      "refund_or_sign_mapping"
+    ],
+    "required_checks": [
+      "break down negative fares by payment type",
+      "inspect the distribution of negative fare amounts"
+    ],
+    "escalation_expected": false
+  }
+]
