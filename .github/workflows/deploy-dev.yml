@@ -1,0 +1,21 @@
+name: Deploy Infra and App - Dev
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  deploy:
+    environment: dev
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout Code
+          uses: actions/checkout@v4
+
+        - name: Azure login via OICD
+          uses: azure/login@v2
+          with:
+            client-id: ${{ vars.AZURE_CLIENT_ID}}
