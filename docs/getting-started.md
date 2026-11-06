@@ -1,62 +1,82 @@
-# Getting Started
+# Getting started
 
 ## Prerequisites
 
-- [uv](https://docs.astral.sh/uv/getting-started/installation/) 0.11+ (Python is managed automatically by uv)
+- [uv](https://docs.astral.sh/uv/getting-started/installation/) 0.11 or later.
+  uv installs Python 3.13 for you.
+- Java 17 or 21 for Spark (for example, `brew install openjdk@21` on macOS).
+- An [Anthropic API key](https://console.anthropic.com/) for investigations.
+  Profiling and detection work without one.
+- Optional: a [LangSmith](https://smith.langchain.com/) key for tracing and
+  planner evaluations.
 
-## Installation
+## Install
 
 ```bash
+git clone https://github.com/wp225/dataops-copilot.git
+cd dataops-copilot
 uv sync
 ```
 
-This creates a virtual environment (`.venv`) and installs the package in editable mode along with all dev dependencies.
+## Configure
 
-## Available Tasks
-
-Tasks are managed with [taskipy](https://github.com/illBeRoy/taskipy):
-
-| Task            | Description                                  |
-| --------------- | -------------------------------------------- |
-| `task format`   | Format code with Ruff                        |
-| `task lint`     | Lint and auto-fix with Ruff                  |
-| `task type`     | Typecheck with ty                            |
-| `task tests`    | Run the test suite with pytest               |
-| `task coverage` | Run tests and report coverage (100% gate)    |
-| `task docs`     | Build documentation with Zensical            |
-| `task serve`    | Serve documentation locally                  |
-| `task upgrade`  | Upgrade all dependencies with uv             |
-| `task release`  | Create a release with python-semantic-release |
-
-## Project Layout
-
-```text
-src/
-  ai_job_assist/
-    __init__.py
-    ai_job_assist.py
-tests/
-  test_ai_job_assist.py
-.github/
-  workflows/       # CI, docs, and release automation
+```bash
+cp .example.env .env
 ```
 
-## Quality Gates
+Set `ANTHROPIC_API_KEY` in `.env`. Every other setting has a default; see
+[Configuration](configuration.md). The `.env` file is loaded at startup, and
+variables already set in your shell take precedence.
 
-Every pull request runs CI that checks, in order:
+## Get a batch
 
-1. PR title follows [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, ...)
-2. Ruff lint (`ruff check`) and format (`ruff format --check`)
-3. Type checking (`ty check`)
-4. Tests (`pytest -n auto`) and coverage (`coverage report` with `fail_under = 100`)
-5. Dependency vulnerability audit (`uv audit`)
+Download a monthly yellow-taxi Parquet file from the
+[TLC trip record page](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
+into `data/`, for example `data/yellow_tripdata_2026-01.parquet`. Any Parquet
+file with the same columns works.
 
-## Releasing
+## Run a scan
 
-Pushes to `main` with conventional commit messages trigger [python-semantic-release](https://python-semantic-release.readthedocs.io/), which:
+=== "Profile only"
 
-1. Bumps the version in `pyproject.toml` based on commit history
-2. Updates `CHANGELOG.md`
-3. Creates and pushes a `v*.*.*` tag
+    No Claude calls. Prints the quality report and the incidents.
 
-The tag then triggers the release workflow, which builds the package, generates [PEP 740 attestations](https://peps.python.org/pep-0740/), and publishes to PyPI via Trusted Publishing — no API tokens required.
+    ```bash
+    uv run python -m dataops_copilot scan \
+      --dataset yellow_taxi --batch 2026-01 \
+      --data-uri data/yellow_tripdata_2026-01.parquet \
+      --no-investigate
+    ```
+
+=== "Profile and investigate"
+
+    Runs one investigation per incident and saves the reports to
+    `data/rca_reports.json`.
+
+    ```bash
+    uv run python -m dataops_copilot scan \
+      --dataset yellow_taxi --batch 2026-01 \
+      --data-uri data/yellow_tripdata_2026-01.parquet
+    ```
+
+!!! tip "Cost and time"
+
+    Each investigation makes at least three Claude calls (plan, assess,
+    write) and up to seven with the default cap of three rounds. A batch with
+    seven incidents can take a few minutes. Lower `DATAOPS_ANTHROPIC_EFFORT`
+    or `DATAOPS_MAX_ITERATIONS` while you experiment.
+
+## Run the API
+
+```bash
+task run
+```
+
+The API listens on `http://127.0.0.1:8000`, with interactive OpenAPI docs at
+[`/docs`](http://127.0.0.1:8000/docs). See [HTTP API and CLI](api.md).
+
+## Next steps
+
+- Walk through real results in the [demo](demo.md).
+- Learn how the [investigation loop](architecture.md) works.
+- [Deploy to Azure](deployment.md) with one script.

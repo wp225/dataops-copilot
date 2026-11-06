@@ -83,6 +83,8 @@ release = { cmd = "uv run python-semantic-release version", help = "Create a rel
 tests = { cmd = "pytest --verbose --color=yes tests", help = "Run all tests using pytest" }
 coverage = { cmd = "coverage run -m pytest tests && coverage report", help = "Generate coverage report" }
 run = { cmd = "uv run python -m dataops_copilot serve", help = "Run the HTTP API locally" }
+docs = { cmd = "zensical build --clean", help = "Build the documentation site" }
+serve = { cmd = "zensical serve", help = "Serve the documentation site locally" }
 upgrade = { cmd = "uv sync --upgrade", help = "Upgrade all dependencies to latest versions."}
 
 [tool.ruff]
