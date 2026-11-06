@@ -28,6 +28,50 @@ source .venv/bin/activate
 uv sync
 ```
 
+## What it does
+
+1. **Profile** a Parquet batch with Spark (null, duplicate, negative-fare and invalid-distance rates).
+2. **Detect** incidents that break the quality policy.
+3. **Investigate** each incident with a LangGraph loop. Claude plans hypotheses, a fixed catalog
+   of read-only Spark checks gathers evidence, Claude judges it, and the loop replans until the
+   evidence is sufficient or the round cap is hit.
+4. **Report** an advisory RCA that escalates to a human when evidence is insufficient, and store
+   it (local JSON or ADLS) as history for future investigations.
+
+See [docs/architecture.md](docs/architecture.md) and [docs/deployment.md](docs/deployment.md).
+
+## Running locally
+
+Copy `.example.env` to `.env` and set `ANTHROPIC_API_KEY`. Spark needs Java 17 or 21.
+
+```bash
+# Profile a batch and investigate every incident (prints JSON)
+uv run python -m dataops_copilot scan --dataset yellow_taxi --batch 2026-01 \
+  --data-uri data/yellow_tripdata_2026-01.parquet
+
+# Only profile and detect (no Claude calls)
+uv run python -m dataops_copilot scan --dataset yellow_taxi --batch 2026-01 \
+  --data-uri data/yellow_tripdata_2026-01.parquet --no-investigate
+
+# HTTP API on http://127.0.0.1:8000 (POST /scans, POST /investigations, GET /docs)
+task run
+```
+
+## Tests
+
+`task tests` skips tests that need a JVM. They're marked `spark` automatically
+when they use the `spark` fixture. Run them on their own, serially:
+
+```bash
+uv run pytest -m spark -p no:xdist
+```
+
+## Deploying to Azure
+
+```bash
+ANTHROPIC_API_KEY=sk-ant-... scripts/deploy.sh
+```
+
 ## Github Repo Setup
 
 To add your new project to its Github repository, firstly make sure you have created a project named **dataops-copilot** on Github.
@@ -44,7 +88,7 @@ git push -u origin main
 We've included a bunch of useful CLI commands for common project tasks using [taskipy](https://github.com/taskipy/taskipy).
 
 ```bash
-# run src/dataops_copilot/dataops_copilot.py
+# run the HTTP API locally
 task run
 
 # run all tests
