@@ -1,7 +1,6 @@
 """Search and Load Previous Similar Cases."""
 
-import json
-from pathlib import Path
+from collections.abc import Iterable
 
 from dataops_copilot.agent.models import (
     HistoricalIncidentMatch,
@@ -11,17 +10,17 @@ from dataops_copilot.agent.models import (
 
 
 def search_rca_reports(
-    investigation_request: IncidentInvestigationRequest, rca_dump_path: Path | str
+    investigation_request: IncidentInvestigationRequest,
+    reports: Iterable[IncidentRCAReport],
 ) -> list[HistoricalIncidentMatch]:
-    """Searches for similar incidents from json dump. Syntactic for now, RAG later."""
+    """Return past reports for the same metric. Syntactic for now, RAG later.
+
+    Matches that also share the affected column or dataset are ranked first.
+    """
     current_incident = investigation_request.incident
-
-    raw_reports = json.loads(Path(rca_dump_path).read_text(encoding="utf-8"))
-
     matches: list[HistoricalIncidentMatch] = []
 
-    for raw_report in raw_reports:
-        historical_report: IncidentRCAReport = IncidentRCAReport.model_validate(raw_report)
+    for historical_report in reports:
         historic_incident = historical_report.request.incident
         if historic_incident.metric != current_incident.metric:
             continue
@@ -44,4 +43,5 @@ def search_rca_reports(
             )
         )
 
+    matches.sort(key=lambda match: len(match.similarity_reasons), reverse=True)
     return matches

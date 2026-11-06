@@ -9,11 +9,12 @@ from dataops_copilot.agent.evaluations.datasets import (
 
 def test_load_planner_evaluation_cases_reads_golden_case() -> None:
     """Load the version-controlled planner evaluation dataset."""
-    dataset_path = Path("evals/rca_planner_v1.json")
+    dataset_path = Path("evals/rca_planner_v2.json")
 
     cases = load_planner_evaluation_cases(dataset_path)
 
-    assert len(cases) == 1
+    assert len(cases) == 5
     assert cases[0].case_id == "negative-fares-no-history"
     assert cases[0].historical_matches == []
     assert cases[0].escalation_expected is False
+    assert len({case.case_id for case in cases}) == len(cases)

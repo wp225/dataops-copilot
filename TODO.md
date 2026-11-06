@@ -1,6 +1,11 @@
-RCA input/output Pydantic models
-#TODO: Local history-search tool with test JSON assessments
-#TODO: Restricted analysis-execution interface
-#TODO: LangGraph investigation loop
-#TODO: LangSmith traces and evaluation cases
-#TODO: Replace local history storage with ADLS
+- [x] RCA input/output Pydantic models
+- [x] History search over stored RCA reports (local JSON or ADLS)
+- [x] Restricted analysis execution: read-only check catalog
+- [x] LangGraph investigation loop (plan, run checks, assess, replan, report)
+- [x] LangSmith planner evaluation (read-only and required-check coverage)
+- [x] Replace local history storage with ADLS
+- [x] Azure Container Apps deployment
+- [ ] Semantic (embedding) history search instead of metric matching
+- [ ] Run scans as Container Apps Jobs instead of synchronous HTTP
+- [ ] CD workflow (GitHub OIDC to Azure) wrapping scripts/deploy.sh
+- [ ] Evaluate assessor and report writer, not only the planner

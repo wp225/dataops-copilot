@@ -9,6 +9,8 @@ copyright: Maintained by <a href="https://github.com/wp225">Jeorge Joshi</a>.
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
+  - Architecture: architecture.md
+  - Deployment: deployment.md
   - License: license.md
 theme:
   name: material

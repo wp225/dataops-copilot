@@ -1,42 +1,24 @@
 """Tests for the shared investigation state model."""
 
-from dataops_copilot.agent.models import IncidentInvestigationRequest
 from dataops_copilot.agent.state import InvestigationState
-from dataops_copilot.quality.models import DataQualityIncident, QualityReport
-
-
-def make_request() -> IncidentInvestigationRequest:
-    """Create a small valid investigation request for testing."""
-    return IncidentInvestigationRequest(
-        incident=DataQualityIncident(
-            metric="negative_fare_rate",
-            observed_rate=0.01,
-            threshold=0.001,
-            affected_column="fare_amount",
-        ),
-        quality_report=QualityReport(
-            row_count=100,
-            negative_fare_rate=0.01,
-            invalid_trip_distance_rate=0.0,
-            duplicate_rate=0.0,
-            null_rates={"fare_amount": 0.0},
-        ),
-        dataset_name="yellow-taxi",
-        batch_id="batch-001",
-    )
+from tests.factories import make_assessment, make_request
 
 
 def test_investigation_state_defaults() -> None:
-    """A freshly created state shoulduv run pytest tests/agent -v
-    uv run pytest carry only the request, with empty defaults.
-    """
+    """A fresh state carries only the request, with empty defaults."""
     state = InvestigationState(request=make_request())
 
     assert state.historical_matches == []
     assert state.analysis_plan is None
-    assert state.generated_analysis is None
-    assert state.code_validation is None
-    assert state.analysis_result == []
+    assert state.check_results == []
+    assert state.assessment is None
     assert state.evidence_sufficient is False
     assert state.iteration_count == 0
     assert state.final_result is None
+
+
+def test_evidence_sufficient_follows_latest_assessment() -> None:
+    state = InvestigationState(request=make_request(), assessment=make_assessment(sufficient=True))
+
+    assert state.evidence_sufficient is True
+    assert state.to_context().assessment == state.assessment

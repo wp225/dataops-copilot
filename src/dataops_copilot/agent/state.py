@@ -1,17 +1,15 @@
 """Shared State Space for Investigation Run."""
 
-from typing import NotRequired, TypedDict
-
 from pydantic import BaseModel, Field
 
+from dataops_copilot.agent.checks.models import CheckResult
 from dataops_copilot.agent.models import (
-    AnalysisExecutionResult,
     AnalysisPlan,
-    CodeValidationResult,
-    GeneratedAnalysis,
+    EvidenceAssessment,
     HistoricalIncidentMatch,
     IncidentInvestigationRequest,
     IncidentRCAReport,
+    InvestigationContext,
 )
 
 
@@ -22,10 +20,23 @@ class InvestigationState(BaseModel):
 
     historical_matches: list[HistoricalIncidentMatch] = Field(default_factory=list)
     analysis_plan: AnalysisPlan | None = None
-    generated_analysis: GeneratedAnalysis | None = None
-    code_validation: CodeValidationResult | None = None
-    analysis_result: list[AnalysisExecutionResult] = Field(default_factory=list)
+    check_results: list[CheckResult] = Field(default_factory=list)
+    assessment: EvidenceAssessment | None = None
 
-    evidence_sufficient: bool = False
     iteration_count: int = 0
     final_result: IncidentRCAReport | None = None
+
+    @property
+    def evidence_sufficient(self) -> bool:
+        """Whether the latest assessment found the evidence sufficient."""
+        return self.assessment is not None and self.assessment.evidence_sufficient
+
+    def to_context(self) -> InvestigationContext:
+        """Return the evidence an LLM step needs, without loop bookkeeping."""
+        return InvestigationContext(
+            request=self.request,
+            historical_matches=self.historical_matches,
+            analysis_plan=self.analysis_plan,
+            check_results=self.check_results,
+            assessment=self.assessment,
+        )

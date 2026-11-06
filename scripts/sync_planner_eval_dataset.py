@@ -6,8 +6,8 @@ from dataops_copilot.agent.evaluations.datasets import (
     load_planner_evaluation_cases,
 )
 
-DATASET_NAME = "dataops-copilot-rca-planner-v1"
-DATASET_PATH = "evals/rca_planner_v1.json"
+DATASET_NAME = "dataops-copilot-rca-planner-v2"
+DATASET_PATH = "evals/rca_planner_v2.json"
 
 
 def main() -> None:
