@@ -1,0 +1,237 @@
+[
+  {
+    "case_id": "negative-fares-no-history",
+    "request": {
+      "incident": {
+        "metric": "negative_fare_rate",
+        "observed_rate": 0.01,
+        "threshold": 0.001,
+        "affected_column": "fare_amount"
+      },
+      "quality_report": {
+        "row_count": 1000,
+        "negative_fare_rate": 0.01,
+        "invalid_trip_distance_rate": 0.0,
+        "duplicate_rate": 0.0,
+        "null_rates": {
+          "fare_amount": 0.0,
+          "trip_distance": 0.0,
+          "payment_type": 0.0,
+          "VendorID": 0.0,
+          "RatecodeID": 0.0,
+          "passenger_count": 0.0,
+          "PULocationID": 0.0
+        }
+      },
+      "dataset_name": "yellow_taxi",
+      "batch_id": "batch-001"
+    },
+    "historical_matches": [],
+    "expected_cause_categories": [
+      "refund_or_sign_mapping"
+    ],
+    "required_checks": [
+      "value_range:fare_amount",
+      "breakdown_by:fare_amount"
+    ],
+    "escalation_expected": false
+  },
+  {
+    "case_id": "negative-fares-with-refund-history",
+    "request": {
+      "incident": {
+        "metric": "negative_fare_rate",
+        "observed_rate": 0.015,
+        "threshold": 0.001,
+        "affected_column": "fare_amount"
+      },
+      "quality_report": {
+        "row_count": 1000,
+        "negative_fare_rate": 0.015,
+        "invalid_trip_distance_rate": 0.0,
+        "duplicate_rate": 0.0,
+        "null_rates": {
+          "fare_amount": 0.0,
+          "trip_distance": 0.0,
+          "payment_type": 0.0,
+          "VendorID": 0.0,
+          "RatecodeID": 0.0,
+          "passenger_count": 0.0,
+          "PULocationID": 0.0
+        }
+      },
+      "dataset_name": "yellow_taxi",
+      "batch_id": "batch-001"
+    },
+    "historical_matches": [
+      {
+        "historical_incident": {
+          "request": {
+            "incident": {
+              "metric": "negative_fare_rate",
+              "observed_rate": 0.02,
+              "threshold": 0.001,
+              "affected_column": "fare_amount"
+            },
+            "quality_report": {
+              "row_count": 1000,
+              "negative_fare_rate": 0.02,
+              "invalid_trip_distance_rate": 0.0,
+              "duplicate_rate": 0.0,
+              "null_rates": {
+                "fare_amount": 0.0,
+                "trip_distance": 0.0,
+                "payment_type": 0.0,
+                "VendorID": 0.0,
+                "RatecodeID": 0.0,
+                "passenger_count": 0.0,
+                "PULocationID": 0.0
+              }
+            },
+            "dataset_name": "yellow_taxi",
+            "batch_id": "batch-000"
+          },
+          "report": {
+            "likely_cause": "Refunds (payment_type=4) were loaded as negative fare_amount",
+            "confidence": "high",
+            "explanation": "All negative fares came from payment_type 4 (dispute/refund).",
+            "previous_similar_incidents": 0,
+            "evidence": [
+              "breakdown_by(column=fare_amount, group_by=payment_type): payment_type=4 -> 100% of negatives"
+            ],
+            "analyses_executed": [
+              "breakdown_by(column=fare_amount, group_by=payment_type)"
+            ],
+            "escalation_required": false,
+            "recommendations": [
+              "Confirm refund handling in the upstream ingestion mapping"
+            ]
+          },
+          "completed_at": "2026-09-01T00:00:00Z"
+        },
+        "similarity_reasons": [
+          "same metric: negative_fare_rate",
+          "same affected column: fare_amount",
+          "same dataset: yellow_taxi"
+        ]
+      }
+    ],
+    "expected_cause_categories": [
+      "refund_or_sign_mapping"
+    ],
+    "required_checks": [
+      "breakdown_by:fare_amount"
+    ],
+    "escalation_expected": false
+  },
+  {
+    "case_id": "zero-trip-distance",
+    "request": {
+      "incident": {
+        "metric": "invalid_trip_distance_rate",
+        "observed_rate": 0.03,
+        "threshold": 0.001,
+        "affected_column": "trip_distance"
+      },
+      "quality_report": {
+        "row_count": 1000,
+        "negative_fare_rate": 0.0,
+        "invalid_trip_distance_rate": 0.03,
+        "duplicate_rate": 0.0,
+        "null_rates": {
+          "fare_amount": 0.0,
+          "trip_distance": 0.0,
+          "payment_type": 0.0,
+          "VendorID": 0.0,
+          "RatecodeID": 0.0,
+          "passenger_count": 0.0,
+          "PULocationID": 0.0
+        }
+      },
+      "dataset_name": "yellow_taxi",
+      "batch_id": "batch-001"
+    },
+    "historical_matches": [],
+    "expected_cause_categories": [
+      "cancelled_or_meter_fault",
+      "vendor_device_issue"
+    ],
+    "required_checks": [
+      "value_range:trip_distance",
+      "breakdown_by:trip_distance"
+    ],
+    "escalation_expected": false
+  },
+  {
+    "case_id": "null-passenger-count",
+    "request": {
+      "incident": {
+        "metric": "null_rate",
+        "observed_rate": 0.25,
+        "threshold": 0.001,
+        "affected_column": "passenger_count"
+      },
+      "quality_report": {
+        "row_count": 1000,
+        "negative_fare_rate": 0.0,
+        "invalid_trip_distance_rate": 0.0,
+        "duplicate_rate": 0.0,
+        "null_rates": {
+          "fare_amount": 0.0,
+          "trip_distance": 0.0,
+          "payment_type": 0.0,
+          "VendorID": 0.0,
+          "RatecodeID": 0.0,
+          "passenger_count": 0.25,
+          "PULocationID": 0.0
+        }
+      },
+      "dataset_name": "yellow_taxi",
+      "batch_id": "batch-001"
+    },
+    "historical_matches": [],
+    "expected_cause_categories": [
+      "upstream_schema_or_vendor_feed_change"
+    ],
+    "required_checks": [
+      "breakdown_by:passenger_count"
+    ],
+    "escalation_expected": false
+  },
+  {
+    "case_id": "duplicate-rows",
+    "request": {
+      "incident": {
+        "metric": "duplicate_rate",
+        "observed_rate": 0.05,
+        "threshold": 0.001,
+        "affected_column": null
+      },
+      "quality_report": {
+        "row_count": 1000,
+        "negative_fare_rate": 0.0,
+        "invalid_trip_distance_rate": 0.0,
+        "duplicate_rate": 0.05,
+        "null_rates": {
+          "fare_amount": 0.0,
+          "trip_distance": 0.0,
+          "payment_type": 0.0,
+          "VendorID": 0.0,
+          "RatecodeID": 0.0,
+          "passenger_count": 0.0,
+          "PULocationID": 0.0
+        }
+      },
+      "dataset_name": "yellow_taxi",
+      "batch_id": "batch-001"
+    },
+    "historical_matches": [],
+    "expected_cause_categories": [
+      "reprocessed_or_double_loaded_batch"
+    ],
+    "required_checks": [
+      "duplicate_rows"
+    ],
+    "escalation_expected": true
+  }
+]

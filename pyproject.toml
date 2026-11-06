@@ -37,6 +37,9 @@ dependencies = [
     "langchain-openai>=1.6.0",
     "jmespath>=1.1.0",
     "azure-core>=1.41.0",
+    "azure-identity>=1.27.0",
+    "azure-storage-blob>=12.31.1",
+    "python-dotenv>=1.2.3",
 ]
 
 [dependency-groups]
@@ -79,7 +82,7 @@ type = { cmd = "ty check", help = "Typecheck code using ty" }
 release = { cmd = "uv run python-semantic-release version", help = "Create a release (version bump + changelog + tag)" }
 tests = { cmd = "pytest --verbose --color=yes tests", help = "Run all tests using pytest" }
 coverage = { cmd = "coverage run -m pytest tests && coverage report", help = "Generate coverage report" }
-run = { cmd = "uv run ./src/dataops_copilot/dataops_copilot.py", help = "Run main application" }
+run = { cmd = "uv run python -m dataops_copilot serve", help = "Run the HTTP API locally" }
 upgrade = { cmd = "uv sync --upgrade", help = "Upgrade all dependencies to latest versions."}
 
 [tool.ruff]
@@ -143,6 +146,9 @@ indent-style = "space"
     "D101",     # Missing docstring in public class
     "D103",     # Missing docstring in public function
     "E741",     # Ambiguous variable name 'l', 'O', or 'I'
+    "D102",     # Missing docstring in public method (test fakes)
+    "ANN401",   # Any in test fakes
+    "ARG001",   # Unused arguments in fake callables
 ]
 
 
@@ -169,7 +175,10 @@ source = ["src"]
 omit = ["_*.py", "__*.py"]
 
 [tool.pytest.ini_options]
-addopts = ["-ra", "--strict-markers", "--strict-config"]
+addopts = ["-ra", "--strict-markers", "--strict-config", "-m", "not spark"]
+markers = [
+    "spark: needs a local JVM/Spark session; skipped by default, run with `pytest -m spark`",
+]
 testpaths = ["tests"]
 pythonpath = ["src"]
 timeout = 60

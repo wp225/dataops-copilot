@@ -15,7 +15,7 @@ def value_range(df: DataFrame, column: str) -> CheckResult:
             check_name=CHECK_NAME,
             succeeded=False,
             metrics={},
-            params={"column": ""},
+            params={"column": column},
             error=f"Column '{column}' does not exist.",
         )
 
