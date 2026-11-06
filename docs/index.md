@@ -1,70 +1,104 @@
-# Dataops-Copilot
+---
+title: DataOps Copilot
+hide:
+  - navigation
+---
 
-DataOps Copilot: an agentic data-quality and incident-response system for an Azure data lake.
-[GitHub repository](https://github.com/wp225/dataops-copilot)
+# DataOps Copilot
 
-## System overview
+**Agentic data-quality monitoring and root-cause analysis for an Azure data lake.**
 
-![Dataops-Copilot overview](diagrams/system/system.png)
-### Ranking overview
+DataOps Copilot profiles each batch that lands in the lake, flags the metrics
+that break your quality policy, and investigates every incident. Claude
+proposes hypotheses and judges the evidence, but every query against the data
+comes from a fixed catalog of read-only Spark checks. The model never writes or
+runs code, and it never modifies data.
 
-![Cyclic graph overview](diagrams/system/cyclic-agent-graph.png)
+[See the demo :material-play-circle:](demo.md){ .md-button .md-button--primary }
+[Get started :material-rocket-launch:](getting-started.md){ .md-button }
 
-## Workflow
+---
 
-```text
-/setup → /scrape → /rank → /apply <job_id>
+## What happens to a batch
+
+```mermaid
+flowchart LR
+    A[Parquet batch<br/>local or ADLS] --> B[Spark profiler]
+    B --> C[Policy detector]
+    C -->|one per incident| D[Investigation loop<br/>Claude + read-only checks]
+    D --> E[(RCA reports<br/>JSON or ADLS)]
+    E -. past cases .-> D
 ```
 
-1. **Setup** creates or incrementally updates a private candidate profile from a CV and confirmed user information.
-2. **Scrape** collects current public postings from configured Greenhouse and Lever job boards.
-3. **Rank** runs compact triage across collected jobs and produces a shortlist.
-4. **Apply** performs a detailed evaluation for one job. After user approval, it creates and verifies tailored application materials.
+<div class="grid cards" markdown>
 
-## Multi-agent application workflow
+-   :material-chart-box-outline:{ .lg .middle } **Profile**
 
-The `/apply` workflow separates drafting from review:
+    ---
 
-```text
-Candidate profile + job posting
-             ↓
-      Full fit evaluation
-             ↓
-      Resume / letter drafter
-             ↓
- Independent reviewer subagent
-             ↓
-  Evidence-grounded revision
-             ↓
- PDF, ATS, and consistency checks
-```
+    Spark computes the row count, the null rate of every column, the duplicate
+    rate, negative fares and non-positive trip distances in one pass.
 
-The reviewer does not invent or edit candidate facts. It returns a critique focused on factual grounding, requirement coverage, genuine gaps, and keyword relevance. The main workflow applies only evidence-supported changes.
+-   :material-alert-decagram-outline:{ .lg .middle } **Detect**
 
-## Privacy by design
+    ---
 
-Candidate-specific data stays local:
+    Any rate above the policy threshold (0.1% by default) becomes a
+    `DataQualityIncident`, tied to the column it affects.
 
-* Original CVs
-* Completed candidate profiles
-* Per-job evaluations
-* Generated resumes and cover letters
-* Application tracker records
+-   :material-graph-outline:{ .lg .middle } **Investigate**
 
-The repository commits reusable templates and workflow definitions, not personal application data.
+    ---
 
-## Start here
+    A LangGraph loop plans hypotheses, runs checks, assesses the evidence and
+    replans until the evidence is enough or the round cap is reached.
 
-Install dependencies:
+-   :material-file-document-check-outline:{ .lg .middle } **Report**
 
-```bash
-uv sync
-```
+    ---
 
-Then open the repository in Claude Code and run:
+    An advisory RCA report, saved as history for future investigations. When
+    the evidence never becomes sufficient, the report is low confidence and
+    asks for a human.
 
-```text
-/setup
-```
+</div>
 
-See the command documentation for the complete workflow.
+## Results on real data
+
+Running against the January 2026 NYC yellow-taxi batch (3,724,889 trips), the
+scan raises seven incidents, and the check catalog narrows them down
+immediately:
+
+| Incident | Observed | What one check reveals |
+| --- | --- | --- |
+| `null_rate` on `passenger_count` (and four other columns) | 29.2% | All 1,088,058 null rows have `payment_type=0`. |
+| `negative_fare_rate` on `fare_amount` | 1.06% | 26,039 of 39,463 negative fares have `payment_type=4`. |
+| `invalid_trip_distance_rate` on `trip_distance` | 3.38% | 114,960 of 125,738 come from `VendorID=2`. |
+
+The [demo walkthrough](demo.md) follows this batch from start to finish.
+
+## Design principles
+
+!!! abstract "Evidence comes from checks, not from the model"
+
+    Claude chooses *which* checks to run and interprets their metrics. The
+    checks themselves are plain, reviewed PySpark functions that only read.
+    A bad column name or a load failure becomes a failed result that Claude
+    can see, so the investigation never crashes.
+
+!!! abstract "Advisory, with an explicit escape hatch"
+
+    If the assessor never finds the evidence sufficient, the final report
+    is forced to `confidence: low` and `escalation_required: true`,
+    whatever the model wrote.
+
+!!! abstract "Facts in the report are set by code"
+
+    The number of similar past incidents and the list of analyses run are
+    written from the graph state, never by the LLM.
+
+## Built with
+
+PySpark · LangGraph · Claude (Opus 5.5, native structured outputs) ·
+FastAPI · Pydantic · Azure Data Lake Storage Gen2 · Azure Container Apps ·
+Bicep · LangSmith · uv
