@@ -25,8 +25,15 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 # --- Runtime stage ---
 # Use a minimal Python image without uv or build tools to keep the final image small.
-FROM python:3.13-slim
+FROM python:3.13-slim-trixie
 
+# PySpark runs on the JVM, so the runtime needs a headless Java runtime.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends openjdk-21-jre-headless \
+    && rm -rf /var/lib/apt/lists/*
+
+# Run as an unprivileged user.
+RUN useradd --create-home --uid 10001 app
 WORKDIR /app
 EXPOSE 8000
 
@@ -36,7 +43,10 @@ COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/src /app/src
 
 # Prepend the venv's bin directory to PATH so the venv's Python and scripts are used.
-ENV PATH="/app/.venv/bin:$PATH"
+ENV PATH="/app/.venv/bin:$PATH" \
+    PYTHONUNBUFFERED=1 \
+    DATAOPS_DATA_CACHE_DIR=/tmp/dataops-copilot
+USER app
 
 # Run the project's main module as the container's default command.
 CMD ["uvicorn", "dataops_copilot.api:app", "--host", "0.0.0.0", "--port", "8000"]
